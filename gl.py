@@ -39,22 +39,34 @@ class Render(object):
         self.pixels = [ [ self.clear_color for x in range(self.width)] for y in range(self.height) ]
 
     def glViewPort(self, x, y, width, height):
-        self.viewport_final_x = x + (width-1)
-        self.viewport_final_y = x + (height-1)
+        self.viewport_initial_x = x
+        self.viewport_initial_y = y
+        self.viewport_witdth = width
+        self.viewport_height = height
+        self.viewport_final_x = x + width
+        self.viewport_final_y = x + height
+        
         
         # this is optional, since there's no need to have an array with the coordinates
         # In order to respect the viewport, there should only be a verification function called
-        # that just verifies if the point is inside the viewport.
-        for x in range(self.viewport_final_x + 1):
-            for y in range(self.viewport_final_y + 1):
+        # that just verifies if the glVertex is inside the viewport.
+        for x in range(self.viewport_initial_x ,self.viewport_final_x + 1):
+            for y in range(self.viewport_initial_y,self.viewport_final_y + 1):
                 self.viewport_coordinates.append([x,y])
-    
+
+
     def glClearColor(self, r,g,b):
         rgb_array = decimal_to_rgb([r,g,b])
         self.clear_color = color(rgb_array[0], rgb_array[1], rgb_array[2])
 
-    def point(self, x, y):
-        self.pixels[y][x] = self.curr_color
+    def glVertex(self, x, y):
+        v_x = 0
+        v_y = 0
+        if(x >= 0 or x < 0):
+            v_x = self.viewport_initial_x + int(round( self.viewport_witdth/2 + x * self.viewport_witdth/2))
+        if(y >= 0 or y < 0):
+            v_y = self.viewport_initial_y + int(round( self.viewport_height/2 + y * self.viewport_height/2))  
+        self.pixels[v_y][v_x] = self.curr_color
 
     def glColor(self, r,g,b):
         rgb_array = decimal_to_rgb([r,g,b])
