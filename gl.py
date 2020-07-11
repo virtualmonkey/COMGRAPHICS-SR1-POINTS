@@ -15,11 +15,12 @@ def dword(d):
 def color(r, g, b):
     return bytes([b, g, r])
 
-def decimal_to_rgb(decimal_array):
+def decimalToRgb(decimal_array):
     rgb_array = []
     for i in range(3):
         rgb_array.append(int(round(decimal_array[i]*255)))
     return rgb_array
+
 
 BLACK = color(0,0,0)
 WHITE = color(255,255,255)
@@ -50,26 +51,35 @@ class Render(object):
         # this is optional, since there's no need to have an array with the coordinates
         # In order to respect the viewport, there should only be a verification function called
         # that just verifies if the glVertex is inside the viewport.
-        for x in range(self.viewport_initial_x ,self.viewport_final_x + 1):
-            for y in range(self.viewport_initial_y,self.viewport_final_y + 1):
-                self.viewport_coordinates.append([x,y])
+        # for x in range(self.viewport_initial_x ,self.viewport_final_x + 1):
+        #     for y in range(self.viewport_initial_y,self.viewport_final_y + 1):
+        #         self.viewport_coordinates.append([x,y])
 
+    def glVertextInViewport(self, x,y):
+        if((x >= self.viewport_initial_x and
+            x <= self.viewport_final_x) and
+            (y >= self.viewport_initial_y and
+            y <= self.viewport_final_y)
+        ):
+            return True
+        return False
 
     def glClearColor(self, r,g,b):
-        rgb_array = decimal_to_rgb([r,g,b])
+        rgb_array = decimalToRgb([r,g,b])
         self.clear_color = color(rgb_array[0], rgb_array[1], rgb_array[2])
 
     def glVertex(self, x, y):
-        v_x = 0
-        v_y = 0
+        # v_x = 0
+        # v_y = 0
         if(x >= 0 or x < 0):
-            v_x = self.viewport_initial_x + int(round( self.viewport_witdth/2 + x * self.viewport_witdth/2))
+            x = self.viewport_initial_x + int(round( self.viewport_witdth/2 + x * self.viewport_witdth/2))
         if(y >= 0 or y < 0):
-            v_y = self.viewport_initial_y + int(round( self.viewport_height/2 + y * self.viewport_height/2))  
-        self.pixels[v_y][v_x] = self.curr_color
+            y = self.viewport_initial_y + int(round( self.viewport_height/2 + y * self.viewport_height/2))  
+        if( self.glVertextInViewport(x,y) == True):
+            self.pixels[y][x] = self.curr_color
 
     def glColor(self, r,g,b):
-        rgb_array = decimal_to_rgb([r,g,b])
+        rgb_array = decimalToRgb([r,g,b])
         self.curr_color = color(rgb_array[0], rgb_array[1], rgb_array[2])
 
     def glFinish(self, filename):
