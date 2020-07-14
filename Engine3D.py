@@ -9,7 +9,7 @@ r.glClearColor(1,0,0)
     
 r.glClear()
 
-r.glViewPort(5,2,10, 4)
+r.glViewPort(3,1,10, 4)
 
 
 r.glVertex(-1,-1)
